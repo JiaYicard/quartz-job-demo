@@ -15,14 +15,15 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
+ * 简单定时器任务
  * @author zzs
  * 2022/5/25 0025 16:18
  */
 @Component
-public class JobManager {
+public class SimpleTriggerJob {
 
 
-    @PostConstruct
+//    @PostConstruct
     void initJob() throws SchedulerException, ParseException {
         SchedulerFactory schedFact = new org.quartz.impl.StdSchedulerFactory();
         Scheduler scheduler = schedFact.getScheduler();
@@ -54,15 +55,21 @@ public class JobManager {
         //特定时间触发，然后每隔5秒触发一次,重复10+1次
         trigger = newTrigger()
                 .withIdentity("trigger3", "group1")
-                .startAt(startTime)  // if a start time is not given (if this line were omitted), "now" is implied
+                // if a start time is not given (if this line were omitted), "now" is implied
+                .startAt(startTime)
                 .withSchedule(simpleSchedule()
                         .withIntervalInSeconds(5)
-                        .withRepeatCount(10)) // note that 10 repeats will give a total of 11 firings
-                .forJob(myJob) // identify job with handle to its JobDetail itself
+                        // note that 10 repeats will give a total of 11 firings
+                        .withRepeatCount(10))
+                // identify job with handle to its JobDetail itself
+                .forJob(myJob)
                 .build();
 
         //设置自己的job和触发器
         scheduler.scheduleJob(myJob, trigger);
+
+        //其它简单例子参考
+        //http://www.quartz-scheduler.org/documentation/2.4.0-SNAPSHOT/tutorials/tutorial-lesson-05.html
     }
 
 }
